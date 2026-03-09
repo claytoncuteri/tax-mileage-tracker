@@ -1,0 +1,27 @@
+{
+  "name": "tax-mileage-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IRS-compliant mileage tracking React component library and standalone app",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=packages/mileage-tracker-core && npm run build --workspace=apps/web",
+    "build:core": "npm run build --workspace=packages/mileage-tracker-core",
+    "build:web": "npm run build --workspace=apps/web",
+    "test": "npm run test --workspace=packages/mileage-tracker-core",
+    "test:watch": "npm run test:watch --workspace=packages/mileage-tracker-core",
+    "test:coverage": "npm run test:coverage --workspace=packages/mileage-tracker-core",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "author": "Clayton Cuteri",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
