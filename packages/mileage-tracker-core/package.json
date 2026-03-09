@@ -1,0 +1,69 @@
+{
+  "name": "mileage-tracker-core",
+  "version": "0.1.0",
+  "description": "IRS-compliant mileage tracking React component library",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.468.0",
+    "nanoid": "^5.1.0",
+    "papaparse": "^5.5.0",
+    "react-hook-form": "^7.54.0",
+    "recharts": "^2.15.0",
+    "sonner": "^1.7.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "^4.3.0"
+  },
+  "author": "Clayton Cuteri",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/claytoncuteri/tax-mileage-tracker.git",
+    "directory": "packages/mileage-tracker-core"
+  },
+  "keywords": [
+    "mileage",
+    "tracker",
+    "tax",
+    "irs",
+    "deduction",
+    "react",
+    "component",
+    "business-mileage",
+    "vehicle-tracking"
+  ]
+}
