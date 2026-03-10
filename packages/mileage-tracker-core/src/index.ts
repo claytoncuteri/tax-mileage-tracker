@@ -5,5 +5,17 @@
  * Track business vs personal vehicle mileage for tax deductions.
  */
 
-// Types will be exported here as they are built
-export {};
+// Types
+export type {
+  Trip,
+  TripType,
+  TripExpenses,
+  Destination,
+  VehicleInfo,
+  TaxSettings,
+  OdometerReading,
+  PeriodStats,
+  MileageTrackerConfig,
+} from './types';
+export type { StorageAdapter } from './types';
+export type { ThemeMode, ThemeConfig } from './types';
