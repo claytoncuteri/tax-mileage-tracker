@@ -1,0 +1,95 @@
+/**
+ * CSS custom properties for the mileage tracker.
+ * All variables are prefixed with --mt- to avoid collisions with host sites.
+ * Host websites can override any of these via [data-mileage-tracker] selector.
+ */
+
+/* Dark theme (default) */
+[data-mileage-tracker],
+[data-mileage-tracker='dark'] {
+  /* Backgrounds */
+  --mt-bg-primary: #0a0a0f;
+  --mt-bg-card: rgba(255, 255, 255, 0.06);
+  --mt-bg-card-hover: rgba(255, 255, 255, 0.1);
+  --mt-bg-input: rgba(255, 255, 255, 0.08);
+  --mt-bg-active: rgba(255, 255, 255, 0.12);
+
+  /* Borders */
+  --mt-border: rgba(255, 255, 255, 0.12);
+  --mt-border-active: rgba(255, 255, 255, 0.25);
+
+  /* Text */
+  --mt-text-primary: #ffffff;
+  --mt-text-secondary: #e0e0e0;
+  --mt-text-muted: #a0a0a0;
+  --mt-text-faint: #909090;
+
+  /* Semantic colors */
+  --mt-color-business: #5dcaa5;
+  --mt-color-personal: #909090;
+  --mt-color-success: #5dcaa5;
+  --mt-color-info: #85b7eb;
+  --mt-color-warning: #fac775;
+  --mt-color-danger: #f09595;
+  --mt-color-accent: #afa9ec;
+  --mt-color-content: #f0997b;
+
+  /* Typography */
+  --mt-font-family: inherit;
+  --mt-font-family-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --mt-font-size-xs: 11px;
+  --mt-font-size-sm: 13px;
+  --mt-font-size-base: 15px;
+  --mt-font-size-lg: 18px;
+  --mt-font-size-xl: 24px;
+  --mt-font-size-2xl: 32px;
+  --mt-font-size-3xl: 48px;
+  --mt-font-weight-normal: 400;
+  --mt-font-weight-medium: 500;
+  --mt-font-weight-semibold: 600;
+  --mt-font-weight-bold: 700;
+
+  /* Spacing & Radius */
+  --mt-radius-sm: 6px;
+  --mt-radius-md: 10px;
+  --mt-radius-lg: 14px;
+  --mt-radius-xl: 16px;
+  --mt-radius-full: 9999px;
+
+  /* Shadows */
+  --mt-shadow-card: none;
+  --mt-shadow-popup: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Transitions */
+  --mt-transition-fast: 0.15s ease;
+  --mt-transition-normal: 0.3s ease;
+}
+
+/* Light theme */
+[data-mileage-tracker='light'] {
+  --mt-bg-primary: #fafafa;
+  --mt-bg-card: rgba(0, 0, 0, 0.04);
+  --mt-bg-card-hover: rgba(0, 0, 0, 0.06);
+  --mt-bg-input: rgba(0, 0, 0, 0.06);
+  --mt-bg-active: rgba(0, 0, 0, 0.08);
+
+  --mt-border: rgba(0, 0, 0, 0.12);
+  --mt-border-active: rgba(0, 0, 0, 0.25);
+
+  --mt-text-primary: #1d1d1f;
+  --mt-text-secondary: #3d3d3f;
+  --mt-text-muted: #6d6d6f;
+  --mt-text-faint: #8d8d8f;
+
+  --mt-color-business: #2a9d6f;
+  --mt-color-personal: #8d8d8f;
+  --mt-color-success: #2a9d6f;
+  --mt-color-info: #4a90d4;
+  --mt-color-warning: #d4a528;
+  --mt-color-danger: #d45050;
+  --mt-color-accent: #7b6fc0;
+  --mt-color-content: #c76840;
+
+  --mt-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --mt-shadow-popup: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
