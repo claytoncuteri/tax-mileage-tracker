@@ -70,6 +70,8 @@ export interface Destination {
   category?: string;
   /** Sort order in the grid */
   sortOrder?: number;
+  /** Street address of this destination (for distance lookup) */
+  address?: string;
 }
 
 /** Vehicle information for deduction calculations */
@@ -132,6 +134,8 @@ export interface MileageTrackerConfig {
   vehicle: VehicleInfo;
   tax: TaxSettings;
   destinations: Destination[];
+  /** User's home address (starting point for mileage calculations) */
+  homeAddress?: string;
   /** Show optional fields (expenses, business entity, etc.) */
   enableOptionalFields?: boolean;
 }

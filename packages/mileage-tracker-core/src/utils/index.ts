@@ -28,3 +28,5 @@ export {
   formatCurrencyPrecise,
   generateTaxSummary,
 } from './irs-calculations';
+
+export { exportTripsToCSV } from './csv-export';
