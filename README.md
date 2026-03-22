@@ -1,5 +1,7 @@
 # Tax Mileage Tracker
 
+[![CI](https://github.com/claytoncuteri/tax-mileage-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/claytoncuteri/tax-mileage-tracker/actions/workflows/ci.yml)
+
 A reusable, IRS-compliant mileage tracking React component library for tracking business vs personal vehicle mileage for tax deductions. Supports Section 179 depreciation, standard mileage rate deduction, and fleet management.
 
 Published as an npm package **and** includes a standalone app that can be deployed behind auth on any website.
