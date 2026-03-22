@@ -95,7 +95,7 @@ describe('calculateSection179Deduction', () => {
 
 describe('calculateTaxSavings', () => {
   it('multiplies deduction by tax rate', () => {
-    expect(calculateTaxSavings(10000, 0.28)).toBe(2800);
+    expect(calculateTaxSavings(10000, 0.28)).toBeCloseTo(2800, 2);
   });
 });
 

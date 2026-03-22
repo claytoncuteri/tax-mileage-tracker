@@ -17,7 +17,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Zap, CalendarDays, BarChart3, Download, Settings as SettingsIcon, Gauge } from 'lucide-react';
+import { Zap, CalendarDays, BarChart3, Download, Settings as SettingsIcon } from 'lucide-react';
 import { ThemeProvider } from './ThemeProvider';
 import { QuickLogger } from './QuickLogger';
 import { TripLog } from './TripLog';

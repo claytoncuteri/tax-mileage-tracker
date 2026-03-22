@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useMileageStore } from '../../store';
-import type { Destination, VehicleInfo, TaxSettings, ThemeMode } from '../../types';
+import type { Destination, ThemeMode } from '../../types';
 
 type SettingsSection = 'account' | 'vehicle' | 'tax' | 'destinations' | 'display' | 'data';
 

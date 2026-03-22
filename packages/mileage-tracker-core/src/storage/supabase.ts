@@ -47,7 +47,7 @@ export function createSupabaseAdapter(config: SupabaseConfig): StorageAdapter {
     return res.json();
   }
 
-  async function insert(table: string, data: Record<string, unknown>): Promise<void> {
+  async function insert(table: string, data: Record<string, unknown> | object): Promise<void> {
     await fetch(`${url}/rest/v1/${table}`, {
       method: 'POST',
       headers,
