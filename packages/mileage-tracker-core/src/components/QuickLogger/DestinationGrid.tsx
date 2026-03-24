@@ -1,7 +1,6 @@
 /**
- * DestinationGrid renders a 2-column grid of destination buttons.
- * Tapping a button selects it for trip logging. Each button shows
- * the destination name, default miles, and business/personal badge.
+ * DestinationGrid renders a 2-column grid of place buttons.
+ * Used as a picker for the "From" or "To" field in QuickLogger.
  */
 
 import {
@@ -17,6 +16,7 @@ import {
   Dumbbell,
   ShoppingCart,
   MapPin,
+  Home,
   type LucideIcon,
 } from 'lucide-react';
 import type { Destination } from '../../types';
@@ -35,15 +35,35 @@ const ICON_MAP: Record<string, LucideIcon> = {
   dumbbell: Dumbbell,
   cart: ShoppingCart,
   pin: MapPin,
+  home: Home,
 };
 
 interface DestinationGridProps {
   destinations: Destination[];
   activeId: string | null;
   onSelect: (destination: Destination) => void;
+  /** Show a "Home" entry at the top of the grid */
+  showHomeOption?: boolean;
+  /** The Home place to show (synthesized from store) */
+  homePlace?: Destination | null;
 }
 
-export function DestinationGrid({ destinations, activeId, onSelect }: DestinationGridProps) {
+function truncateAddress(address: string, maxLen = 30): string {
+  if (!address || address.length <= maxLen) return address;
+  return address.slice(0, maxLen - 1) + '…';
+}
+
+export function DestinationGrid({
+  destinations,
+  activeId,
+  onSelect,
+  showHomeOption,
+  homePlace,
+}: DestinationGridProps) {
+  const allPlaces = showHomeOption && homePlace
+    ? [homePlace, ...destinations]
+    : destinations;
+
   return (
     <div
       style={{
@@ -52,9 +72,10 @@ export function DestinationGrid({ destinations, activeId, onSelect }: Destinatio
         gap: 8,
       }}
     >
-      {destinations.map((dest) => {
+      {allPlaces.map((dest) => {
         const IconComponent = ICON_MAP[dest.icon] ?? MapPin;
         const isActive = activeId === dest.id;
+        const hasCoords = !!dest.coordinates;
 
         return (
           <button
@@ -87,7 +108,7 @@ export function DestinationGrid({ destinations, activeId, onSelect }: Destinatio
                 style={{
                   fontSize: 'var(--mt-font-size-sm)',
                   color: 'var(--mt-text-secondary)',
-                  fontWeight: 'var(--mt-font-weight-semibold)' as unknown as number,
+                  fontWeight: 600,
                   lineHeight: 1.2,
                 }}
               >
@@ -101,33 +122,55 @@ export function DestinationGrid({ destinations, activeId, onSelect }: Destinatio
                 alignItems: 'center',
               }}
             >
-              <span
-                style={{
-                  fontSize: 'var(--mt-font-size-base)',
-                  color: 'var(--mt-text-primary)',
-                  fontWeight: 'var(--mt-font-weight-bold)' as unknown as number,
-                }}
-              >
-                {dest.defaultMiles > 0 ? `${dest.defaultMiles} mi` : '? mi'}
-              </span>
+              {/* Address or miles */}
               <span
                 style={{
                   fontSize: 'var(--mt-font-size-xs)',
-                  fontWeight: 'var(--mt-font-weight-bold)' as unknown as number,
-                  padding: '2px 6px',
-                  borderRadius: 'var(--mt-radius-sm)',
-                  background:
-                    dest.type === 'Business'
-                      ? 'rgba(93, 202, 165, 0.15)'
-                      : 'rgba(144, 144, 144, 0.15)',
-                  color:
-                    dest.type === 'Business'
-                      ? 'var(--mt-color-business)'
-                      : 'var(--mt-color-personal)',
+                  color: 'var(--mt-text-muted)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '65%',
                 }}
               >
-                {dest.type}
+                {dest.address ? truncateAddress(dest.address, 22) : (
+                  dest.defaultMiles && dest.defaultMiles > 0
+                    ? `${dest.defaultMiles} mi`
+                    : 'No address'
+                )}
               </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                {/* GPS indicator */}
+                {hasCoords && (
+                  <span
+                    style={{
+                      fontSize: 9,
+                      color: 'var(--mt-color-success)',
+                    }}
+                    title="GPS coordinates available"
+                  >
+                    ●
+                  </span>
+                )}
+                <span
+                  style={{
+                    fontSize: 'var(--mt-font-size-xs)',
+                    fontWeight: 700,
+                    padding: '2px 6px',
+                    borderRadius: 'var(--mt-radius-sm)',
+                    background:
+                      dest.type === 'Business'
+                        ? 'rgba(93, 202, 165, 0.15)'
+                        : 'rgba(144, 144, 144, 0.15)',
+                    color:
+                      dest.type === 'Business'
+                        ? 'var(--mt-color-business)'
+                        : 'var(--mt-color-personal)',
+                  }}
+                >
+                  {dest.type}
+                </span>
+              </div>
             </div>
           </button>
         );
