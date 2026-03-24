@@ -30,3 +30,13 @@ export {
 } from './irs-calculations';
 
 export { exportTripsToCSV } from './csv-export';
+
+export {
+  calculateDistance,
+  getOSRMDistance,
+  getHaversineDistance,
+} from './distance';
+export type { DistanceResult } from './distance';
+
+export { geocodeAddress } from './geocoding';
+export type { GeocodeResult } from './geocoding';
