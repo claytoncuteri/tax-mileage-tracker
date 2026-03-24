@@ -10,13 +10,16 @@ import { create } from 'zustand';
 import type {
   Trip,
   Destination,
+  Coordinates,
   OdometerReading,
   VehicleInfo,
   TaxSettings,
+  AddTripParams,
   StorageAdapter,
   ThemeMode,
 } from '../types';
 import { generateId, nowISO, getCurrentYear } from '../utils';
+import { geocodeAddress } from '../utils/geocoding';
 
 export interface MileageStoreState {
   // Data
@@ -30,12 +33,17 @@ export interface MileageStoreState {
   theme: ThemeMode;
   currentYear: number;
 
+  // Home location
+  homeAddress: string;
+  homeCoordinates: Coordinates | null;
+
   // Storage
   adapter: StorageAdapter | null;
   isLoading: boolean;
   isSyncing: boolean;
 
   // Actions - Trips
+  /** @deprecated Use addTripV2 for From → To trips with auto-distance */
   addTrip: (
     destination: string,
     roundTripMiles: number,
@@ -44,6 +52,8 @@ export interface MileageStoreState {
     category?: string,
     businessEntity?: string,
   ) => Promise<void>;
+  /** Add a trip with From → To routing and distance metadata */
+  addTripV2: (params: AddTripParams) => Promise<void>;
   updateTrip: (id: string, updates: Partial<Trip>) => Promise<void>;
   deleteTrip: (id: string) => Promise<void>;
 
@@ -57,6 +67,14 @@ export interface MileageStoreState {
   addDestination: (destination: Omit<Destination, 'id'>) => Promise<void>;
   updateDestination: (id: string, updates: Partial<Destination>) => Promise<void>;
   removeDestination: (id: string) => Promise<void>;
+
+  // Actions - Home
+  setHomeAddress: (address: string) => void;
+  setHomeCoordinates: (coords: Coordinates | null) => void;
+  geocodeHome: () => Promise<Coordinates | null>;
+
+  // Actions - Place geocoding
+  geocodePlace: (id: string) => Promise<Coordinates | null>;
 
   // Actions - Settings
   setVehicle: (vehicle: VehicleInfo) => void;
@@ -93,6 +111,8 @@ export const useMileageStore = create<MileageStoreState>((set, get) => ({
   tax: DEFAULT_TAX,
   theme: 'dark',
   currentYear: getCurrentYear(),
+  homeAddress: '',
+  homeCoordinates: null,
   adapter: null,
   isLoading: false,
   isSyncing: false,
@@ -117,6 +137,44 @@ export const useMileageStore = create<MileageStoreState>((set, get) => ({
     set((state) => ({ trips: [trip, ...state.trips] }));
 
     // Sync to adapter
+    const { adapter } = get();
+    if (adapter) {
+      try {
+        set({ isSyncing: true });
+        await adapter.addTrip(trip);
+      } catch (error) {
+        console.error('Failed to sync trip to storage:', error);
+      } finally {
+        set({ isSyncing: false });
+      }
+    }
+  },
+
+  addTripV2: async (params) => {
+    const now = nowISO();
+    const trip: Trip = {
+      id: generateId(),
+      date: now,
+      destination: params.toPlace.name,
+      roundTripMiles: params.miles,
+      type: params.type,
+      purpose: params.purpose,
+      category: params.category,
+      businessEntity: params.businessEntity,
+      createdAt: now,
+      updatedAt: now,
+      // From → To fields
+      fromPlaceId: params.fromPlace?.id,
+      fromPlaceName: params.fromPlace?.name,
+      toPlaceId: params.toPlace.id,
+      toPlaceName: params.toPlace.name,
+      isRoundTrip: params.isRoundTrip,
+      oneWayMiles: params.oneWayMiles,
+      distanceSource: params.distanceSource,
+    };
+
+    set((state) => ({ trips: [trip, ...state.trips] }));
+
     const { adapter } = get();
     if (adapter) {
       try {
@@ -276,6 +334,47 @@ export const useMileageStore = create<MileageStoreState>((set, get) => ({
         console.error('Failed to sync destinations:', error);
       }
     }
+  },
+
+  // Home actions
+  setHomeAddress: (homeAddress) => set({ homeAddress }),
+  setHomeCoordinates: (homeCoordinates) => set({ homeCoordinates }),
+
+  geocodeHome: async () => {
+    const { homeAddress } = get();
+    if (!homeAddress) return null;
+
+    const result = await geocodeAddress(homeAddress);
+    if (result) {
+      set({ homeCoordinates: result.coordinates });
+      return result.coordinates;
+    }
+    return null;
+  },
+
+  // Place geocoding
+  geocodePlace: async (id) => {
+    const place = get().destinations.find((d) => d.id === id);
+    if (!place?.address) return null;
+
+    const result = await geocodeAddress(place.address);
+    if (result) {
+      const newDestinations = get().destinations.map((d) =>
+        d.id === id ? { ...d, coordinates: result.coordinates } : d,
+      );
+      set({ destinations: newDestinations });
+
+      const { adapter } = get();
+      if (adapter) {
+        try {
+          await adapter.saveDestinations(newDestinations);
+        } catch (error) {
+          console.error('Failed to sync geocoded place:', error);
+        }
+      }
+      return result.coordinates;
+    }
+    return null;
   },
 
   // Settings actions
