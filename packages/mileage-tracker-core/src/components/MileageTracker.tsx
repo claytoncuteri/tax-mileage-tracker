@@ -66,6 +66,7 @@ export function MileageTracker({
   tax,
   theme = 'dark',
   storageAdapter,
+  homeAddress,
   className,
   onTripLogged,
 }: MileageTrackerProps) {
@@ -76,6 +77,7 @@ export function MileageTracker({
   const setVehicle = useMileageStore((s) => s.setVehicle);
   const setTax = useMileageStore((s) => s.setTax);
   const setTheme = useMileageStore((s) => s.setTheme);
+  const setHomeAddress = useMileageStore((s) => s.setHomeAddress);
   const storeTheme = useMileageStore((s) => s.theme);
 
   // Initialize store from props on mount
@@ -87,6 +89,7 @@ export function MileageTracker({
     if (vehicle) setVehicle(vehicle);
     if (tax) setTax(tax);
     if (theme) setTheme(theme);
+    if (homeAddress) setHomeAddress(homeAddress);
 
     // Load persisted data
     loadFromAdapter();
