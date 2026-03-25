@@ -1,14 +1,14 @@
 /**
  * Settings component for configuring the mileage tracker.
- * Sections: Account, Vehicle, Tax, Destinations, Display, Data.
+ * Sections: Account, Vehicle, Tax, Saved Places, Display.
  */
 
 import { useState } from 'react';
-import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronUp, MapPin, Check, X, Loader2 } from 'lucide-react';
 import { useMileageStore } from '../../store';
 import type { Destination, ThemeMode } from '../../types';
 
-type SettingsSection = 'account' | 'vehicle' | 'tax' | 'destinations' | 'display' | 'data';
+type SettingsSection = 'account' | 'vehicle' | 'tax' | 'places' | 'display';
 
 export function Settings() {
   const [openSection, setOpenSection] = useState<SettingsSection | null>('account');
@@ -16,12 +16,17 @@ export function Settings() {
   const tax = useMileageStore((s) => s.tax);
   const theme = useMileageStore((s) => s.theme);
   const destinations = useMileageStore((s) => s.destinations);
+  const homeAddress = useMileageStore((s) => s.homeAddress);
+  const homeCoordinates = useMileageStore((s) => s.homeCoordinates);
   const setVehicle = useMileageStore((s) => s.setVehicle);
   const setTax = useMileageStore((s) => s.setTax);
   const setTheme = useMileageStore((s) => s.setTheme);
+  const setHomeAddress = useMileageStore((s) => s.setHomeAddress);
+  const geocodeHome = useMileageStore((s) => s.geocodeHome);
   const addDestination = useMileageStore((s) => s.addDestination);
   const updateDestination = useMileageStore((s) => s.updateDestination);
   const removeDestination = useMileageStore((s) => s.removeDestination);
+  const geocodePlace = useMileageStore((s) => s.geocodePlace);
 
   const toggleSection = (section: SettingsSection) => {
     setOpenSection((prev) => (prev === section ? null : section));
@@ -37,6 +42,12 @@ export function Settings() {
           value={tax.businessNames.join(', ')}
           onChange={(v) => setTax({ ...tax, businessNames: v.split(',').map((s) => s.trim()).filter(Boolean) })}
           placeholder="Comma-separated business names"
+        />
+        <HomeAddressField
+          address={homeAddress}
+          hasCoordinates={!!homeCoordinates}
+          onChangeAddress={setHomeAddress}
+          onGeocode={geocodeHome}
         />
       </SettingsGroup>
 
@@ -63,21 +74,28 @@ export function Settings() {
         <FieldNumber label="Tax Year" value={tax.taxYear} onChange={(v) => setTax({ ...tax, taxYear: v })} step={1} />
       </SettingsGroup>
 
-      {/* Destinations */}
-      <SettingsGroup title="Destinations" section="destinations" openSection={openSection} onToggle={toggleSection}>
+      {/* Saved Places */}
+      <SettingsGroup title="Saved Places" section="places" openSection={openSection} onToggle={toggleSection}>
         {destinations.map((dest) => (
-          <DestinationEditor key={dest.id} destination={dest} onUpdate={updateDestination} onDelete={removeDestination} />
+          <PlaceEditor
+            key={dest.id}
+            destination={dest}
+            onUpdate={updateDestination}
+            onDelete={removeDestination}
+            onGeocode={geocodePlace}
+          />
         ))}
         <button
           onClick={() =>
             addDestination({
-              name: 'New Destination',
+              name: 'New Place',
               subtitle: '',
               defaultMiles: 0,
               type: 'Business',
               icon: 'pin',
               color: '#5DCAA5',
               defaultNote: '',
+              address: '',
               category: 'Other',
             })
           }
@@ -99,7 +117,7 @@ export function Settings() {
             marginTop: 8,
           }}
         >
-          <Plus size={16} /> Add Destination
+          <Plus size={16} /> Add Place
         </button>
       </SettingsGroup>
 
@@ -129,6 +147,86 @@ export function Settings() {
           ))}
         </div>
       </SettingsGroup>
+    </div>
+  );
+}
+
+/** Home address field with geocode button */
+function HomeAddressField({
+  address,
+  hasCoordinates,
+  onChangeAddress,
+  onGeocode,
+}: {
+  address: string;
+  hasCoordinates: boolean;
+  onChangeAddress: (v: string) => void;
+  onGeocode: () => Promise<unknown>;
+}) {
+  const [isGeocoding, setIsGeocoding] = useState(false);
+
+  const handleGeocode = async () => {
+    setIsGeocoding(true);
+    await onGeocode();
+    setIsGeocoding(false);
+  };
+
+  return (
+    <div>
+      <label style={{ display: 'block', fontSize: 'var(--mt-font-size-xs)', color: 'var(--mt-text-faint)', fontWeight: 600, marginBottom: 4 }}>
+        Home Address
+      </label>
+      <div style={{ display: 'flex', gap: 6 }}>
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => onChangeAddress(e.target.value)}
+          placeholder="Your home address (starting point for trips)"
+          style={{
+            flex: 1,
+            padding: '8px 10px',
+            borderRadius: 'var(--mt-radius-md)',
+            border: '1px solid var(--mt-border)',
+            background: 'var(--mt-bg-input)',
+            color: 'var(--mt-text-primary)',
+            fontSize: 'var(--mt-font-size-sm)',
+            fontFamily: 'var(--mt-font-family)',
+            boxSizing: 'border-box',
+            outline: 'none',
+          }}
+        />
+        <button
+          onClick={handleGeocode}
+          disabled={!address || isGeocoding}
+          title={hasCoordinates ? 'GPS coordinates found' : 'Look up GPS coordinates'}
+          style={{
+            padding: '8px 10px',
+            borderRadius: 'var(--mt-radius-md)',
+            border: '1px solid var(--mt-border)',
+            background: hasCoordinates ? 'rgba(93, 202, 165, 0.1)' : 'var(--mt-bg-input)',
+            color: hasCoordinates ? 'var(--mt-color-success)' : 'var(--mt-text-muted)',
+            cursor: address && !isGeocoding ? 'pointer' : 'not-allowed',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            fontSize: 'var(--mt-font-size-xs)',
+            fontFamily: 'var(--mt-font-family)',
+          }}
+        >
+          {isGeocoding ? (
+            <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
+          ) : hasCoordinates ? (
+            <Check size={14} />
+          ) : (
+            <MapPin size={14} />
+          )}
+        </button>
+      </div>
+      {hasCoordinates && (
+        <span style={{ fontSize: 'var(--mt-font-size-xs)', color: 'var(--mt-color-success)', marginTop: 2, display: 'block' }}>
+          GPS coordinates saved
+        </span>
+      )}
     </div>
   );
 }
@@ -264,22 +362,32 @@ function FieldNumber({
   );
 }
 
-/** Inline destination editor */
-function DestinationEditor({
+/** Inline place editor with geocode support */
+function PlaceEditor({
   destination,
   onUpdate,
   onDelete,
+  onGeocode,
 }: {
   destination: Destination;
   onUpdate: (id: string, updates: Partial<Destination>) => void;
   onDelete: (id: string) => void;
+  onGeocode: (id: string) => Promise<unknown>;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
+  const hasCoords = !!destination.coordinates;
+
+  const handleGeocode = async () => {
+    setIsGeocoding(true);
+    await onGeocode(destination.id);
+    setIsGeocoding(false);
+  };
 
   return (
     <div
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'var(--mt-bg-input)',
         borderRadius: 'var(--mt-radius-md)',
         padding: '10px 12px',
         border: '0.5px solid var(--mt-border)',
@@ -298,12 +406,22 @@ function DestinationEditor({
             cursor: 'pointer',
             padding: 0,
             textAlign: 'left',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
           }}
         >
+          {hasCoords ? (
+            <Check size={12} color="var(--mt-color-success)" />
+          ) : (
+            <X size={12} color="var(--mt-color-danger)" />
+          )}
           {destination.name}
-          <span style={{ color: 'var(--mt-text-faint)', fontWeight: 400, marginLeft: 8 }}>
-            {destination.defaultMiles > 0 ? `${destination.defaultMiles} mi` : 'custom mi'}
-          </span>
+          {destination.address && (
+            <span style={{ color: 'var(--mt-text-faint)', fontWeight: 400, fontSize: 'var(--mt-font-size-xs)' }}>
+              {destination.address.length > 25 ? destination.address.slice(0, 25) + '...' : destination.address}
+            </span>
+          )}
         </button>
         <button
           onClick={() => onDelete(destination.id)}
@@ -322,9 +440,71 @@ function DestinationEditor({
       {isExpanded && (
         <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <FieldInput label="Name" value={destination.name} onChange={(v) => onUpdate(destination.id, { name: v })} />
-          <FieldNumber label="Default Miles (RT)" value={destination.defaultMiles} onChange={(v) => onUpdate(destination.id, { defaultMiles: v })} step={0.1} />
+
+          {/* Address with geocode button */}
+          <div>
+            <label style={{ display: 'block', fontSize: 'var(--mt-font-size-xs)', color: 'var(--mt-text-faint)', fontWeight: 600, marginBottom: 4 }}>
+              Address
+            </label>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <input
+                type="text"
+                value={destination.address ?? ''}
+                onChange={(e) => onUpdate(destination.id, { address: e.target.value, coordinates: undefined })}
+                placeholder="Street address"
+                style={{
+                  flex: 1,
+                  padding: '8px 10px',
+                  borderRadius: 'var(--mt-radius-md)',
+                  border: '1px solid var(--mt-border)',
+                  background: 'var(--mt-bg-input)',
+                  color: 'var(--mt-text-primary)',
+                  fontSize: 'var(--mt-font-size-sm)',
+                  fontFamily: 'var(--mt-font-family)',
+                  boxSizing: 'border-box',
+                  outline: 'none',
+                }}
+              />
+              <button
+                onClick={handleGeocode}
+                disabled={!destination.address || isGeocoding}
+                title={hasCoords ? 'GPS found' : 'Look up GPS'}
+                style={{
+                  padding: '8px 10px',
+                  borderRadius: 'var(--mt-radius-md)',
+                  border: '1px solid var(--mt-border)',
+                  background: hasCoords ? 'rgba(93, 202, 165, 0.1)' : 'var(--mt-bg-input)',
+                  color: hasCoords ? 'var(--mt-color-success)' : 'var(--mt-text-muted)',
+                  cursor: destination.address && !isGeocoding ? 'pointer' : 'not-allowed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: 'var(--mt-font-size-xs)',
+                  fontFamily: 'var(--mt-font-family)',
+                }}
+              >
+                {isGeocoding ? (
+                  <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
+                ) : hasCoords ? (
+                  <Check size={14} />
+                ) : (
+                  <MapPin size={14} />
+                )}
+              </button>
+            </div>
+            {hasCoords && (
+              <span style={{ fontSize: 'var(--mt-font-size-xs)', color: 'var(--mt-text-muted)', marginTop: 2, display: 'block' }}>
+                {destination.coordinates!.lat.toFixed(4)}, {destination.coordinates!.lng.toFixed(4)}
+              </span>
+            )}
+          </div>
+
           <FieldInput label="Default Note" value={destination.defaultNote} onChange={(v) => onUpdate(destination.id, { defaultNote: v })} />
-          <FieldInput label="Address" value={destination.address ?? ''} onChange={(v) => onUpdate(destination.id, { address: v })} placeholder="Street address for distance lookup" />
+          <FieldNumber
+            label="Manual Distance Override (mi)"
+            value={destination.defaultMiles ?? 0}
+            onChange={(v) => onUpdate(destination.id, { defaultMiles: v || undefined })}
+            step={0.1}
+          />
           <FieldInput label="Category" value={destination.category ?? ''} onChange={(v) => onUpdate(destination.id, { category: v })} />
           <div>
             <label style={{ display: 'block', fontSize: 'var(--mt-font-size-xs)', color: 'var(--mt-text-faint)', fontWeight: 600, marginBottom: 4 }}>Type</label>
