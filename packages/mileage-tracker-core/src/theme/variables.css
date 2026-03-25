@@ -67,29 +67,29 @@
 
 /* Light theme */
 [data-mileage-tracker='light'] {
-  --mt-bg-primary: #fafafa;
-  --mt-bg-card: rgba(0, 0, 0, 0.04);
-  --mt-bg-card-hover: rgba(0, 0, 0, 0.06);
-  --mt-bg-input: rgba(0, 0, 0, 0.06);
-  --mt-bg-active: rgba(0, 0, 0, 0.08);
+  --mt-bg-primary: #f8f9fa;
+  --mt-bg-card: #ffffff;
+  --mt-bg-card-hover: #f0f2f5;
+  --mt-bg-input: #f0f2f5;
+  --mt-bg-active: #e4e7eb;
 
-  --mt-border: rgba(0, 0, 0, 0.12);
-  --mt-border-active: rgba(0, 0, 0, 0.25);
+  --mt-border: #d1d5db;
+  --mt-border-active: #9ca3af;
 
-  --mt-text-primary: #1d1d1f;
-  --mt-text-secondary: #3d3d3f;
-  --mt-text-muted: #6d6d6f;
-  --mt-text-faint: #8d8d8f;
+  --mt-text-primary: #111827;
+  --mt-text-secondary: #374151;
+  --mt-text-muted: #6b7280;
+  --mt-text-faint: #9ca3af;
 
-  --mt-color-business: #2a9d6f;
-  --mt-color-personal: #8d8d8f;
-  --mt-color-success: #2a9d6f;
-  --mt-color-info: #4a90d4;
-  --mt-color-warning: #d4a528;
-  --mt-color-danger: #d45050;
-  --mt-color-accent: #7b6fc0;
-  --mt-color-content: #c76840;
+  --mt-color-business: #059669;
+  --mt-color-personal: #6b7280;
+  --mt-color-success: #059669;
+  --mt-color-info: #2563eb;
+  --mt-color-warning: #d97706;
+  --mt-color-danger: #dc2626;
+  --mt-color-accent: #7c3aed;
+  --mt-color-content: #ea580c;
 
-  --mt-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --mt-shadow-popup: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --mt-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --mt-shadow-popup: 0 10px 40px rgba(0, 0, 0, 0.15);
 }

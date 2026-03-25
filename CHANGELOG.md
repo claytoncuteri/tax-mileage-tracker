@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.2.0 (2026-03-25)
+
+### Features
+
+- Address-based "Saved Places" with GPS coordinates via OpenStreetMap geocoding
+- From → To trip logging with auto-calculated driving distance
+- OSRM routing integration (free, no API key) for accurate road distances
+- Haversine formula fallback for offline distance estimation
+- Round-trip vs one-way toggle on every trip
+- Home Address field in Account settings as default trip origin
+- Geocode button on each saved place to resolve GPS coordinates
+- Distance source tracking (GPS routed / estimated / manual) per trip
+
+### Improvements
+
+- Light theme improvements with better contrast and card shadows
+- CSV export now includes From, To, One Way Miles, Round Trip, and Distance Source columns
+- Trip log entries show "From → To" route and round-trip/one-way badge
+- Settings "Destinations" section renamed to "Saved Places" with address-first editing
+- Removed personal information from demo defaults (uses gitignored local.config.ts)
+- Added comprehensive legal disclaimer to README
+
+### New Files
+
+- `utils/distance.ts` — OSRM + Haversine distance calculation
+- `utils/geocoding.ts` — OpenStreetMap Nominatim geocoding
+- `components/QuickLogger/PlaceSelector.tsx` — From/To route selector bar
+- `local.config.example.ts` — Template for personal configuration
+
+### Types
+
+- Added: `Coordinates`, `Place`, `DistanceSource`, `AddTripParams`
+- Trip: added `fromPlaceId`, `fromPlaceName`, `toPlaceId`, `toPlaceName`, `isRoundTrip`, `oneWayMiles`, `distanceSource`
+- Destination: `address` now required, added `coordinates`, `defaultMiles` now optional
+
 ## 0.1.0 (2026-03-22)
 
 ### Features
