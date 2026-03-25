@@ -20,10 +20,14 @@ import {
 interface CSVRow {
   Date: string;
   Day: string;
-  Destination: string;
+  From: string;
+  To: string;
   Category: string;
+  'One Way Miles': string;
   'Round Trip Miles': number;
+  'Round Trip': string;
   'Business/Personal': string;
+  'Distance Source': string;
   'Purpose/Notes': string;
 }
 
@@ -46,10 +50,14 @@ export function exportTripsToCSV(
   const rows: CSVRow[] = sorted.map((trip) => ({
     Date: formatExportDate(trip.date),
     Day: getDayOfWeek(trip.date),
-    Destination: trip.destination,
+    From: trip.fromPlaceName ?? '',
+    To: trip.toPlaceName ?? trip.destination,
     Category: trip.category ?? '',
+    'One Way Miles': trip.oneWayMiles ? String(trip.oneWayMiles) : '',
     'Round Trip Miles': trip.roundTripMiles,
+    'Round Trip': trip.isRoundTrip !== undefined ? (trip.isRoundTrip ? 'Yes' : 'No') : 'Yes',
     'Business/Personal': trip.type,
+    'Distance Source': trip.distanceSource ?? 'manual',
     'Purpose/Notes': trip.purpose,
   }));
 

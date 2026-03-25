@@ -11,6 +11,10 @@ export type {
   TripType,
   TripExpenses,
   Destination,
+  Place,
+  Coordinates,
+  DistanceSource,
+  AddTripParams,
   VehicleInfo,
   TaxSettings,
   OdometerReading,
@@ -23,7 +27,7 @@ export type {
 
 // Components
 export { MileageTracker } from './components/MileageTracker';
-export { QuickLogger, DestinationGrid, TripInputPanel } from './components/QuickLogger';
+export { QuickLogger, DestinationGrid, TripInputPanel, PlaceSelector } from './components/QuickLogger';
 export { TripLog, TripLogEntry } from './components/TripLog';
 export { WeeklyScorecard } from './components/WeeklyScorecard';
 export { MonthlyDashboard } from './components/MonthlyDashboard';
@@ -68,6 +72,10 @@ export {
   formatExportDate,
   getCurrentYear,
   generateId,
+  calculateDistance,
+  getOSRMDistance,
+  getHaversineDistance,
+  geocodeAddress,
 } from './utils';
 
 // Theme
