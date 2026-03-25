@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import type { Trip } from '../../types';
 import { formatTripDate } from '../../utils';
 
@@ -60,9 +60,20 @@ export function TripLogEntry({ trip, onUpdate, onDelete }: TripLogEntryProps) {
                 fontSize: 'var(--mt-font-size-base)',
                 color: 'var(--mt-text-secondary)',
                 fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
               }}
             >
-              {trip.destination}
+              {trip.fromPlaceName ? (
+                <>
+                  <span>{trip.fromPlaceName}</span>
+                  <ArrowRight size={12} color="var(--mt-text-faint)" />
+                  <span>{trip.toPlaceName ?? trip.destination}</span>
+                </>
+              ) : (
+                trip.destination
+              )}
             </div>
             <div
               style={{
@@ -92,6 +103,28 @@ export function TripLogEntry({ trip, onUpdate, onDelete }: TripLogEntryProps) {
               {' '}
               · {trip.type}
             </span>
+            {trip.isRoundTrip !== undefined && (
+              <span
+                style={{
+                  color: 'var(--mt-text-faint)',
+                  marginLeft: 4,
+                }}
+              >
+                · {trip.isRoundTrip ? 'RT' : 'OW'}
+              </span>
+            )}
+            {trip.distanceSource && trip.distanceSource !== 'manual' && (
+              <span
+                style={{
+                  color: 'var(--mt-text-faint)',
+                  marginLeft: 4,
+                  fontSize: 'var(--mt-font-size-xs)',
+                }}
+                title={trip.distanceSource === 'osrm' ? 'GPS routed' : 'Estimated'}
+              >
+                {trip.distanceSource === 'osrm' ? '📍' : '📐'}
+              </span>
+            )}
           </div>
 
           {/* Editable note */}

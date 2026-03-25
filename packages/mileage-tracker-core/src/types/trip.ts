@@ -9,6 +9,15 @@
 /** Business or personal trip classification */
 export type TripType = 'Business' | 'Personal';
 
+/** GPS coordinates for a saved place */
+export interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
+/** How the trip distance was determined */
+export type DistanceSource = 'osrm' | 'haversine' | 'manual';
+
 /**
  * A single trip record.
  *
@@ -23,6 +32,7 @@ export type TripType = 'Business' | 'Personal';
 export interface Trip {
   id: string;
   date: string; // ISO 8601 timestamp
+  /** Destination name (legacy: single destination; new: "to" place name) */
   destination: string;
   roundTripMiles: number;
   type: TripType;
@@ -34,6 +44,22 @@ export interface Trip {
   businessEntity?: string;
   createdAt: string; // ISO 8601
   updatedAt: string; // ISO 8601
+
+  // ── From → To trip fields (v2) ──────────────────────────
+  /** Origin place ID */
+  fromPlaceId?: string;
+  /** Origin place name (denormalized for display without lookup) */
+  fromPlaceName?: string;
+  /** Destination place ID */
+  toPlaceId?: string;
+  /** Destination place name (denormalized for display without lookup) */
+  toPlaceName?: string;
+  /** Whether this trip is round-trip (miles = 2× one-way distance) */
+  isRoundTrip?: boolean;
+  /** One-way distance before round-trip doubling */
+  oneWayMiles?: number;
+  /** How the distance was determined */
+  distanceSource?: DistanceSource;
 }
 
 /**
@@ -57,8 +83,8 @@ export interface Destination {
   id: string;
   name: string;
   subtitle?: string;
-  /** Default round-trip miles. 0 means user must enter manually. */
-  defaultMiles: number;
+  /** Manual distance override (miles). 0 or omitted means auto-calculate. */
+  defaultMiles?: number;
   type: TripType;
   /** Icon name from lucide-react */
   icon: string;
@@ -70,8 +96,27 @@ export interface Destination {
   category?: string;
   /** Sort order in the grid */
   sortOrder?: number;
-  /** Street address of this destination (for distance lookup) */
-  address?: string;
+  /** Street address of this place */
+  address: string;
+  /** GPS coordinates (populated after geocoding) */
+  coordinates?: Coordinates;
+}
+
+/** Alias for Destination — conceptually a "Saved Place" */
+export type Place = Destination;
+
+/** Parameters for adding a trip with From → To routing */
+export interface AddTripParams {
+  fromPlace?: Place;
+  toPlace: Place;
+  miles: number;
+  oneWayMiles?: number;
+  isRoundTrip: boolean;
+  type: TripType;
+  purpose: string;
+  category?: string;
+  businessEntity?: string;
+  distanceSource?: DistanceSource;
 }
 
 /** Vehicle information for deduction calculations */
@@ -136,6 +181,8 @@ export interface MileageTrackerConfig {
   destinations: Destination[];
   /** User's home address (starting point for mileage calculations) */
   homeAddress?: string;
+  /** Home GPS coordinates (populated after geocoding) */
+  homeCoordinates?: Coordinates;
   /** Show optional fields (expenses, business entity, etc.) */
   enableOptionalFields?: boolean;
 }

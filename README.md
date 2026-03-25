@@ -62,6 +62,37 @@ npm run dev
 
 The demo app runs at `http://localhost:3000` with localStorage for data persistence.
 
+### Personal Configuration
+
+The demo app ships with generic placeholder data. To use your own vehicle, tax, and business info, create a local config file (which is `.gitignored` so your personal data stays private):
+
+```bash
+cp apps/web/app/local.config.example.ts apps/web/app/local.config.ts
+```
+
+Edit `local.config.ts` with your details:
+
+```typescript
+import type { VehicleInfo, TaxSettings } from 'mileage-tracker-core';
+
+export const vehicle: VehicleInfo = {
+  name: 'My Car',
+  cost: 45000,
+  kwhPerMile: 0.25,   // EV
+  costPerKwh: 0.12,
+};
+
+export const tax: TaxSettings = {
+  taxRate: 0.24,
+  targetBusinessPercent: 0.70,
+  taxYear: 2026,
+  businessNames: ['My Business LLC'],
+  userName: 'Your Name',
+};
+```
+
+The app automatically picks up `local.config.ts` on reload. If the file doesn't exist, it falls back to demo defaults.
+
 ### Environment Variables
 
 Copy `.env.example` to `.env.local` and fill in:
@@ -203,7 +234,17 @@ The IRS also requires start and end-of-year odometer readings. Use the OdometerL
 
 The CSV export includes all required fields plus a summary section with taxpayer info, business use percentage, and deduction estimates. Hand this to your accountant at tax time.
 
-> **Disclaimer**: This tool helps you maintain records. It is not tax advice. Consult a qualified tax professional for tax guidance.
+> **⚠️ Important Disclaimer**
+>
+> This software is provided for **record-keeping purposes only** and does **not** constitute tax, legal, or financial advice. The IRS mileage rates, deduction calculations, and compliance guidance referenced in this tool are approximations and may not reflect the most current regulations.
+>
+> - **Always consult a qualified tax professional or CPA** before claiming any vehicle deductions on your tax return.
+> - **Verify all mileage entries and calculations** before submitting to the IRS or including in any tax filing.
+> - **This tool is not a substitute for professional tax preparation.** Tax law is complex and varies by situation.
+> - The authors and contributors of this software assume **no liability** for errors, omissions, or any tax penalties resulting from the use of this tool.
+> - **Double-check your numbers.** Maintain separate records and reconcile them with this tool's output before filing.
+>
+> By using this software, you acknowledge that you are solely responsible for the accuracy of your tax records and filings.
 
 ## Development
 

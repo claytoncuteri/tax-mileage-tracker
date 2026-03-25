@@ -32,9 +32,12 @@ describe('exportTripsToCSV', () => {
   it('includes header row with required columns', () => {
     const csv = exportTripsToCSV([makeTrip()], testTax, testVehicle, []);
     expect(csv).toContain('Date');
-    expect(csv).toContain('Destination');
+    expect(csv).toContain('From');
+    expect(csv).toContain('To');
     expect(csv).toContain('Round Trip Miles');
+    expect(csv).toContain('Round Trip');
     expect(csv).toContain('Business/Personal');
+    expect(csv).toContain('Distance Source');
     expect(csv).toContain('Purpose/Notes');
   });
 

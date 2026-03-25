@@ -35,5 +35,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Local user config (contains personal info)
+local.config.ts
+
 # Misc
 *.tsbuildinfo
