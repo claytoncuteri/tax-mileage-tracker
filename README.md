@@ -6,9 +6,40 @@ A reusable, IRS-compliant mileage tracking React component library for tracking 
 
 Published as an npm package **and** includes a standalone app that can be deployed behind auth on any website.
 
+> **⚠️ Important Disclaimer**
+>
+> This software is provided for **record-keeping purposes only** and does **not** constitute tax, legal, or financial advice. The IRS mileage rates, deduction calculations, and compliance guidance referenced in this tool are approximations and may not reflect the most current regulations.
+>
+> - **Always consult a qualified tax professional or CPA** before claiming any vehicle deductions on your tax return.
+> - **Verify all mileage entries and calculations** before submitting to the IRS or including in any tax filing.
+> - **This tool is not a substitute for professional tax preparation.** Tax law is complex and varies by situation.
+> - The authors and contributors of this software assume **no liability** for errors, omissions, or any tax penalties resulting from the use of this tool.
+> - **Double-check your numbers.** Maintain separate records and reconcile them with this tool's output before filing.
+>
+> By using this software, you acknowledge that you are solely responsible for the accuracy of your tax records and filings.
+
 ## Why
 
 The IRS requires contemporaneous mileage records for vehicle deductions (Publication 463). Most people either forget to log trips or use clunky spreadsheets. This library makes it easy: tap a destination, review pre-filled details, log the trip in under 10 seconds.
+
+## IRS Compliance
+
+### Required fields (per Publication 463)
+
+Every business trip records:
+- **Date** — when the trip occurred
+- **Destination** — where you drove
+- **Miles** — round-trip distance
+- **Type** — business or personal
+- **Purpose** — specific business reason
+
+### Annual odometer readings
+
+The IRS also requires start and end-of-year odometer readings. Use the OdometerLog component to record these.
+
+### Export format
+
+The CSV export includes all required fields plus a summary section with taxpayer info, business use percentage, and deduction estimates. Hand this to your accountant at tax time.
 
 ## Quick Start
 
@@ -214,37 +245,6 @@ All styling uses CSS custom properties with the `--mt-` prefix. Override any var
 ```
 
 Set `theme="inherit"` to disable all default styles and let host CSS control everything.
-
-## IRS Compliance
-
-### Required fields (per Publication 463)
-
-Every business trip records:
-- **Date** — when the trip occurred
-- **Destination** — where you drove
-- **Miles** — round-trip distance
-- **Type** — business or personal
-- **Purpose** — specific business reason
-
-### Annual odometer readings
-
-The IRS also requires start and end-of-year odometer readings. Use the OdometerLog component to record these.
-
-### Export format
-
-The CSV export includes all required fields plus a summary section with taxpayer info, business use percentage, and deduction estimates. Hand this to your accountant at tax time.
-
-> **⚠️ Important Disclaimer**
->
-> This software is provided for **record-keeping purposes only** and does **not** constitute tax, legal, or financial advice. The IRS mileage rates, deduction calculations, and compliance guidance referenced in this tool are approximations and may not reflect the most current regulations.
->
-> - **Always consult a qualified tax professional or CPA** before claiming any vehicle deductions on your tax return.
-> - **Verify all mileage entries and calculations** before submitting to the IRS or including in any tax filing.
-> - **This tool is not a substitute for professional tax preparation.** Tax law is complex and varies by situation.
-> - The authors and contributors of this software assume **no liability** for errors, omissions, or any tax penalties resulting from the use of this tool.
-> - **Double-check your numbers.** Maintain separate records and reconcile them with this tool's output before filing.
->
-> By using this software, you acknowledge that you are solely responsible for the accuracy of your tax records and filings.
 
 ## Development
 
