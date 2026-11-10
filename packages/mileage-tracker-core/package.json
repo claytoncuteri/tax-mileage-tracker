@@ -52,7 +52,7 @@
     "jsdom": "^27.0.1",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
-    "vite-plugin-dts": "^4.3.0",
+    "vite-plugin-dts": "^5.1.2",
     "vitest": "^4.1.1"
   },
   "author": "Clayton Cuteri",
